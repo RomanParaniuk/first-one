@@ -9,7 +9,7 @@
 [Bb]uilds/
 [Ll]ogs/
 [Mm]emoryCaptures/
-[Oo]ther packs/
+[Zz]other packs/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 *.meta
