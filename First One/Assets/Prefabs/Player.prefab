@@ -322,7 +322,7 @@ PrefabInstance:
     - target: {fileID: 1244407263476498961, guid: d5062f7e2d3904bda88f5cb13096d98b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.98
       objectReference: {fileID: 0}
     - target: {fileID: 1244407263476498961, guid: d5062f7e2d3904bda88f5cb13096d98b,
         type: 3}
@@ -379,6 +379,16 @@ PrefabInstance:
       propertyPath: m_Mass
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 1244407263476498963, guid: d5062f7e2d3904bda88f5cb13096d98b,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 62c2781e745a9421187d12c9290dcded, type: 2}
+    - target: {fileID: 1244407263476498963, guid: d5062f7e2d3904bda88f5cb13096d98b,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1244407263476498965, guid: d5062f7e2d3904bda88f5cb13096d98b,
         type: 3}
       propertyPath: m_Name
@@ -389,6 +399,21 @@ PrefabInstance:
       propertyPath: joystick
       value: 
       objectReference: {fileID: 2204303084428773171}
+    - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
+        type: 3}
+      propertyPath: moveSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
+        type: 3}
+      propertyPath: jumpSpeed
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
+        type: 3}
+      propertyPath: groundLayer.m_Bits
+      value: 256
+      objectReference: {fileID: 0}
     - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
         type: 3}
       propertyPath: maxSpeed
@@ -402,7 +427,12 @@ PrefabInstance:
     - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
         type: 3}
       propertyPath: linearDrag
-      value: 3
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
+        type: 3}
+      propertyPath: groundLength
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d5062f7e2d3904bda88f5cb13096d98b, type: 3}
