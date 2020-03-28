@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
 
     [Header("Physics")]
     public float maxSpeed = 7f;
-    public float minSpeed = 0.05f;
+    public float minSpeed = 0.02f;
     public float linearDrag = 4f;
 
     private void Start()
@@ -54,6 +54,8 @@ public class Player : MonoBehaviour
             rb.velocity = new Vector2(0f, rb.velocity.y);
         }
         animator.SetFloat("horizontal", Mathf.Abs(rb.velocity.x));
+        print("Velosity is " + rb.velocity);
+        print("Horizontal is " + horizontal);
     }
 
     void modifyPhysics()
