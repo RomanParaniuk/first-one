@@ -1481,6 +1481,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 999897776, guid: 172c475a33e9444f5a6211c12756e984, type: 3}
+      propertyPath: jumpDelay
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 999897776, guid: 172c475a33e9444f5a6211c12756e984, type: 3}
+      propertyPath: colliderOffset.x
+      value: -0.07
+      objectReference: {fileID: 0}
     - target: {fileID: 2204303083300192937, guid: 172c475a33e9444f5a6211c12756e984,
         type: 3}
       propertyPath: m_Layer
