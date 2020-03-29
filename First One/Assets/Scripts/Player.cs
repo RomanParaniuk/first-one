@@ -52,10 +52,6 @@ public class Player : MonoBehaviour
             StartCoroutine(JumpSqueeze(1.25f, 0.8f, 0.05f));
         }
 
-        if (joystick.Vertical > 0.4f)
-        {
-            jumpTimer = Time.time + jumpDelay;
-        }
         animator.SetBool("onGround", onGround);
         animator.SetFloat("vertical", rb.velocity.y);
 
@@ -66,7 +62,7 @@ public class Player : MonoBehaviour
     {
 
         moveCharacter(direction.x);
-        if (jumpTimer > Time.time && onGround)
+        if (joystick.Vertical > 0.4f && jumpTimer < Time.time && onGround)
         {
             Jump();
         }
@@ -96,8 +92,7 @@ public class Player : MonoBehaviour
     {
         rb.velocity = new Vector2(rb.velocity.x, 0);
         rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
-        jumpTimer = 0;
-
+        jumpTimer = Time.time + jumpDelay;
         StartCoroutine(JumpSqueeze(0.5f, 1.2f, 0.1f));
 
     }

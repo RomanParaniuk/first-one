@@ -168,6 +168,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Joystick Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 3610963615969447316, guid: de26b4445891b4a46b17c7ae50a297e8,
+        type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4863482773657332313, guid: de26b4445891b4a46b17c7ae50a297e8,
+        type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4863482773900645853, guid: de26b4445891b4a46b17c7ae50a297e8,
+        type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4863482774660018119, guid: de26b4445891b4a46b17c7ae50a297e8,
+        type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: de26b4445891b4a46b17c7ae50a297e8, type: 3}
 --- !u!224 &8067484528916521213 stripped
@@ -287,6 +307,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
         type: 3}
+      propertyPath: jumpDelay
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
+        type: 3}
       propertyPath: groundLayer.m_Bits
       value: 256
       objectReference: {fileID: 0}
@@ -309,6 +334,11 @@ PrefabInstance:
         type: 3}
       propertyPath: groundLength
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
+        type: 3}
+      propertyPath: colliderOffset.x
+      value: -0.07
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d5062f7e2d3904bda88f5cb13096d98b, type: 3}
