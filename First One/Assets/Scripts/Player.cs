@@ -58,6 +58,7 @@ public class Player : MonoBehaviour
         }
         animator.SetBool("onGround", onGround);
         animator.SetFloat("vertical", rb.velocity.y);
+
         direction = new Vector2(joystick.Horizontal, maxSpeed);
     }
 
