@@ -58,6 +58,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8067484530265424314}
     m_Modifications:
+    - target: {fileID: 3610963615969447312, guid: de26b4445891b4a46b17c7ae50a297e8,
+        type: 3}
+      propertyPath: m_SortingLayerID
+      value: 276930055
+      objectReference: {fileID: 0}
+    - target: {fileID: 3610963615969447313, guid: de26b4445891b4a46b17c7ae50a297e8,
+        type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3610963615969447315, guid: de26b4445891b4a46b17c7ae50a297e8,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -183,6 +193,31 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 4863482774660018118, guid: de26b4445891b4a46b17c7ae50a297e8,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.38849854
+      objectReference: {fileID: 0}
+    - target: {fileID: 4863482774660018118, guid: de26b4445891b4a46b17c7ae50a297e8,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.38849854
+      objectReference: {fileID: 0}
+    - target: {fileID: 4863482774660018118, guid: de26b4445891b4a46b17c7ae50a297e8,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.38849854
+      objectReference: {fileID: 0}
+    - target: {fileID: 4863482774660018118, guid: de26b4445891b4a46b17c7ae50a297e8,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 131
+      objectReference: {fileID: 0}
+    - target: {fileID: 4863482774660018118, guid: de26b4445891b4a46b17c7ae50a297e8,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 115
+      objectReference: {fileID: 0}
     - target: {fileID: 4863482774660018119, guid: de26b4445891b4a46b17c7ae50a297e8,
         type: 3}
       propertyPath: m_Layer
@@ -277,11 +312,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1244407263476498963, guid: d5062f7e2d3904bda88f5cb13096d98b,
         type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 6200000, guid: 62c2781e745a9421187d12c9290dcded, type: 2}
-    - target: {fileID: 1244407263476498963, guid: d5062f7e2d3904bda88f5cb13096d98b,
-        type: 3}
       propertyPath: m_CollisionDetection
       value: 1
       objectReference: {fileID: 0}
@@ -290,11 +320,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player Object
       objectReference: {fileID: 0}
-    - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
-        type: 3}
-      propertyPath: joystick
-      value: 
-      objectReference: {fileID: 2204303084428773171}
     - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
         type: 3}
       propertyPath: moveSpeed
@@ -315,6 +340,11 @@ PrefabInstance:
       propertyPath: groundLayer.m_Bits
       value: 256
       objectReference: {fileID: 0}
+    - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
+        type: 3}
+      propertyPath: joystick
+      value: 
+      objectReference: {fileID: 2204303084428773171}
     - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
         type: 3}
       propertyPath: maxSpeed

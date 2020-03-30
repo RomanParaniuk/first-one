@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] Joystick joystick;
     Rigidbody2D rb;
     Animator animator;
+    bool isAlive = true;
 
     [Header("Horizontal Movement")]
     public float moveSpeed = 7f;
@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
 
     [Header("Components")]
     public LayerMask groundLayer;
+    public Joystick joystick;
 
 
     [Header("Physics")]
@@ -45,12 +46,8 @@ public class Player : MonoBehaviour
     void Update()
     {
         bool wasOnGround = onGround;
-        onGround = Physics2D.Raycast(transform.position + colliderOffset, Vector2.down, groundLength, groundLayer) || Physics2D.Raycast(transform.position - colliderOffset, Vector2.down, groundLength, groundLayer);
-
-        if (!wasOnGround && onGround)
-        {
-            StartCoroutine(JumpSqueeze(1.25f, 0.8f, 0.05f));
-        }
+        onGround = checkIsOnGround();
+        Squeeze(wasOnGround);
 
         animator.SetBool("onGround", onGround);
         animator.SetFloat("vertical", rb.velocity.y);
@@ -60,13 +57,30 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!isAlive)
+        {
+            return;
+        }
 
         moveCharacter(direction.x);
-        if (joystick.Vertical > 0.4f && jumpTimer < Time.time && onGround)
-        {
-            Jump();
-        }
+        Jump();
         modifyPhysics();
+    }
+
+
+    private bool checkIsOnGround()
+    {
+        return Physics2D.Raycast(transform.position + colliderOffset, Vector2.down, groundLength, groundLayer) ||
+            Physics2D.Raycast(transform.position - colliderOffset, Vector2.down, groundLength, groundLayer);
+
+    }
+
+    private void Squeeze(bool wasOnGround)
+    {
+        if (!wasOnGround && onGround)
+        {
+            StartCoroutine(JumpSqueeze(1.25f, 0.8f, 0.05f));
+        }
     }
 
     void moveCharacter(float horizontal)
@@ -85,15 +99,19 @@ public class Player : MonoBehaviour
         {
             rb.velocity = new Vector2(0f, rb.velocity.y);
         }
+
         animator.SetFloat("horizontal", Mathf.Abs(rb.velocity.x));
     }
 
     void Jump()
     {
-        rb.velocity = new Vector2(rb.velocity.x, 0);
-        rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
-        jumpTimer = Time.time + jumpDelay;
-        StartCoroutine(JumpSqueeze(0.5f, 1.2f, 0.1f));
+        if (joystick.Vertical > 0.4f && jumpTimer < Time.time && onGround)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, 0);
+            rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
+            jumpTimer = Time.time + jumpDelay;
+            StartCoroutine(JumpSqueeze(0.5f, 1.2f, 0.1f));
+        }
 
     }
 
@@ -159,5 +177,12 @@ public class Player : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position + colliderOffset, transform.position + colliderOffset + Vector3.down * groundLength);
         Gizmos.DrawLine(transform.position - colliderOffset, transform.position - colliderOffset + Vector3.down * groundLength);
+    }
+
+    public void Die()
+    {
+        isAlive = false;
+        animator.SetTrigger("isDying");
+
     }
 }
