@@ -7,7 +7,20 @@ public class Player : MonoBehaviour
 {
     Rigidbody2D rb;
     Animator animator;
+
+
+
     bool isAlive = true;
+ 
+    private Vector2 ledgePosBot;
+    private Vector2 ledgePos1;
+    private Vector2 ledgePos2;
+    public float ledgeClimbXOffset1 = 0f;
+    public float ledgeClimbYOffset1 = 0f;
+    public float ledgeClimbXOffset2 = 0f;
+    public float ledgeClimbYOffset2 = 0f;
+
+
 
     [Header("Horizontal Movement")]
     public float moveSpeed = 7f;
@@ -22,6 +35,9 @@ public class Player : MonoBehaviour
     [Header("Components")]
     public LayerMask groundLayer;
     public Joystick joystick;
+    public Transform ledgeCheck;
+    public Transform wallCheck;
+
 
 
     [Header("Physics")]
@@ -33,8 +49,13 @@ public class Player : MonoBehaviour
 
     [Header("Collision")]
     public bool onGround = false;
+    public bool isTouchingLedge;
+    public bool isTouchingWall;
+    private bool canClimbLedge = false;
+    public bool ledgeDetected;
     public float groundLength = 0.45f;
     public Vector3 colliderOffset;
+    public float wallCheckDistance = 0.6f;
 
     private void Start()
     {
@@ -46,13 +67,58 @@ public class Player : MonoBehaviour
     void Update()
     {
         bool wasOnGround = onGround;
-        onGround = checkIsOnGround();
         Squeeze(wasOnGround);
+        CheckLedgeClimb();
+        CheckSurroundings();
+
 
         animator.SetBool("onGround", onGround);
         animator.SetFloat("vertical", rb.velocity.y);
 
         direction = new Vector2(joystick.Horizontal, maxSpeed);
+    }
+
+    private void CheckLedgeClimb()
+    {
+        if (ledgeDetected && !canClimbLedge)
+        {
+            canClimbLedge = true;
+
+            if (facingRight)
+            {
+                ledgePos1 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) - ledgeClimbXOffset1, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset1);
+                ledgePos2 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) + ledgeClimbXOffset2, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset2);
+            }
+            else
+            {
+                ledgePos1 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) + ledgeClimbXOffset1, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset1);
+                ledgePos2 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) - ledgeClimbXOffset2, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset2);
+            }
+
+            animator.SetBool("canClimbLedge", canClimbLedge);
+
+        }
+
+        if (canClimbLedge)
+        {
+            transform.position = ledgePos1;
+        }
+    }
+
+    private void CheckSurroundings()
+    {
+        onGround = Physics2D.Raycast(transform.position + colliderOffset, Vector2.down, groundLength, groundLayer) ||
+            Physics2D.Raycast(transform.position - colliderOffset, Vector2.down, groundLength, groundLayer);
+
+        isTouchingWall = Physics2D.Raycast(wallCheck.position, transform.right, wallCheckDistance, groundLayer);
+
+        isTouchingLedge = Physics2D.Raycast(ledgeCheck.position, transform.right, wallCheckDistance, groundLayer);
+
+        if (isTouchingWall && !isTouchingLedge && !ledgeDetected)
+        {
+            ledgeDetected = true;
+            ledgePosBot = wallCheck.position;
+        }
     }
 
     void FixedUpdate()
@@ -65,14 +131,6 @@ public class Player : MonoBehaviour
         moveCharacter(direction.x);
         Jump();
         modifyPhysics();
-    }
-
-
-    private bool checkIsOnGround()
-    {
-        return Physics2D.Raycast(transform.position + colliderOffset, Vector2.down, groundLength, groundLayer) ||
-            Physics2D.Raycast(transform.position - colliderOffset, Vector2.down, groundLength, groundLayer);
-
     }
 
     private void Squeeze(bool wasOnGround)
@@ -145,6 +203,15 @@ public class Player : MonoBehaviour
             }
         }
     }
+
+    public void FinishLedgeClimb()
+    {
+        canClimbLedge = false;
+        transform.position = ledgePos2;
+        ledgeDetected = false;
+        animator.SetBool("canClimbLedge", canClimbLedge);
+    }
+
     void Flip()
     {
         facingRight = !facingRight;
@@ -177,6 +244,9 @@ public class Player : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position + colliderOffset, transform.position + colliderOffset + Vector3.down * groundLength);
         Gizmos.DrawLine(transform.position - colliderOffset, transform.position - colliderOffset + Vector3.down * groundLength);
+        Gizmos.DrawLine(transform.position + colliderOffset + Vector3.right * wallCheckDistance, transform.position + colliderOffset);
+        Gizmos.DrawLine(ledgeCheck.position + colliderOffset + Vector3.right * wallCheckDistance, ledgeCheck.position + colliderOffset);
+
     }
 
     public void Die()
