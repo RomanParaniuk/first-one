@@ -313,12 +313,12 @@ PrefabInstance:
     - target: {fileID: 1244407263476498961, guid: d5062f7e2d3904bda88f5cb13096d98b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.67
+      value: 5.174
       objectReference: {fileID: 0}
     - target: {fileID: 1244407263476498961, guid: d5062f7e2d3904bda88f5cb13096d98b,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.83
+      value: -2.488
       objectReference: {fileID: 0}
     - target: {fileID: 1244407263476498961, guid: d5062f7e2d3904bda88f5cb13096d98b,
         type: 3}
@@ -383,17 +383,22 @@ PrefabInstance:
     - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
         type: 3}
       propertyPath: ledgeClimbXOffset1
-      value: 0.3
+      value: -0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
+        type: 3}
+      propertyPath: ledgeClimbYOffset1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
         type: 3}
       propertyPath: ledgeClimbXOffset2
-      value: 0.5
+      value: 0.17
       objectReference: {fileID: 0}
     - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
         type: 3}
       propertyPath: ledgeClimbYOffset2
-      value: 2
+      value: 1.42
       objectReference: {fileID: 0}
     - target: {fileID: 9128923712694003295, guid: d5062f7e2d3904bda88f5cb13096d98b,
         type: 3}
