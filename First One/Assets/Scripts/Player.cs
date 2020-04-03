@@ -7,11 +7,12 @@ public class Player : MonoBehaviour
 {
     Rigidbody2D rb;
     Animator animator;
+    Collider2D collider;
 
 
 
     bool isAlive = true;
- 
+
     private Vector2 ledgePosBot;
     private Vector2 ledgePos1;
     private Vector2 ledgePos2;
@@ -23,14 +24,19 @@ public class Player : MonoBehaviour
 
 
     [Header("Horizontal Movement")]
+    public bool isMoving = true;
     public float moveSpeed = 7f;
     public Vector2 direction;
+    public float slideSpeed = 0.2f;
+    public float slideDelay = 2f;
     private bool facingRight = true;
+    private bool canSlide = false;
 
     [Header("Vertical Movement")]
     public float jumpSpeed = 1f;
     public float jumpDelay = 0.25f;
     private float jumpTimer;
+    private float slideTimer;
 
     [Header("Components")]
     public LayerMask groundLayer;
@@ -49,6 +55,7 @@ public class Player : MonoBehaviour
 
     [Header("Collision")]
     public bool onGround = false;
+    public bool isSliding = false;
     public bool isTouchingLedge;
     public bool isTouchingWall;
     private bool canClimbLedge = false;
@@ -61,6 +68,7 @@ public class Player : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        collider = GetComponent<Collider2D>();
 
     }
 
@@ -68,8 +76,8 @@ public class Player : MonoBehaviour
     {
         bool wasOnGround = onGround;
         Squeeze(wasOnGround);
-        CheckLedgeClimb();
         CheckSurroundings();
+        LedgeClimb();
 
 
         animator.SetBool("onGround", onGround);
@@ -78,32 +86,6 @@ public class Player : MonoBehaviour
         direction = new Vector2(joystick.Horizontal, maxSpeed);
     }
 
-    private void CheckLedgeClimb()
-    {
-        if (ledgeDetected && !canClimbLedge)
-        {
-            canClimbLedge = true;
-
-            if (facingRight)
-            {
-                ledgePos1 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) - ledgeClimbXOffset1, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset1);
-                ledgePos2 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) + ledgeClimbXOffset2, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset2);
-            }
-            else
-            {
-                ledgePos1 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) + ledgeClimbXOffset1, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset1);
-                ledgePos2 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) - ledgeClimbXOffset2, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset2);
-            }
-
-            animator.SetBool("canClimbLedge", canClimbLedge);
-
-        }
-
-        if (canClimbLedge)
-        {
-            transform.position = ledgePos1;
-        }
-    }
 
     private void CheckSurroundings()
     {
@@ -113,6 +95,8 @@ public class Player : MonoBehaviour
         isTouchingWall = Physics2D.Raycast(wallCheck.position, transform.right, wallCheckDistance, groundLayer);
 
         isTouchingLedge = Physics2D.Raycast(ledgeCheck.position, transform.right, wallCheckDistance, groundLayer);
+
+        canSlide = joystick.Vertical < -0.3f && slideTimer < Time.time && onGround && Math.Abs(rb.velocity.x) > 2.0f;
 
         if (isTouchingWall && !isTouchingLedge && !ledgeDetected)
         {
@@ -128,8 +112,13 @@ public class Player : MonoBehaviour
             return;
         }
 
-        moveCharacter(direction.x);
-        Jump();
+        if (!isSliding)
+        {
+            moveCharacter(direction.x);
+            Jump();
+        }
+
+        Slide(direction.x);
         modifyPhysics();
     }
 
@@ -145,7 +134,7 @@ public class Player : MonoBehaviour
     {
         rb.AddForce(Vector2.right * horizontal * moveSpeed);
 
-        if ((horizontal > 0 && !facingRight) || (horizontal < 0 && facingRight))
+        if ((horizontal > 0 && !facingRight) || (horizontal < 0 && facingRight) && !isSliding)
         {
             Flip();
         }
@@ -171,6 +160,22 @@ public class Player : MonoBehaviour
             StartCoroutine(JumpSqueeze(0.5f, 1.2f, 0.1f));
         }
 
+    }
+
+    void Slide(float directionX)
+    {
+        if (canSlide)
+        {
+            if ((directionX > 0 && !facingRight) || (directionX < 0 && facingRight) && !isSliding)
+            {
+                Flip();
+            }
+
+            rb.AddForce(new Vector2(Mathf.Sign(rb.velocity.x) * slideSpeed, 0f), ForceMode2D.Impulse);
+            isSliding = true;
+            animator.SetBool("isSliding", isSliding);
+            slideTimer = Time.time + slideDelay;
+        }
     }
 
     void modifyPhysics()
@@ -204,12 +209,45 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void LedgeClimb()
+    {
+        if (ledgeDetected && !canClimbLedge)
+        {
+            canClimbLedge = true;
+
+            if (facingRight)
+            {
+                ledgePos1 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) - ledgeClimbXOffset1, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset1);
+                ledgePos2 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) + ledgeClimbXOffset2, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset2);
+            }
+            else
+            {
+                ledgePos1 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) + ledgeClimbXOffset1, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset1);
+                ledgePos2 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) - ledgeClimbXOffset2, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset2);
+            }
+
+            animator.SetBool("canClimbLedge", canClimbLedge);
+
+        }
+
+        if (canClimbLedge)
+        {
+            transform.position = ledgePos1;
+        }
+    }
+
     public void FinishLedgeClimb()
     {
         canClimbLedge = false;
         transform.position = ledgePos2;
         ledgeDetected = false;
         animator.SetBool("canClimbLedge", canClimbLedge);
+    }
+
+    public void FinishSlide()
+    {
+        isSliding = false;
+        animator.SetBool("isSliding", isSliding);
     }
 
     void Flip()

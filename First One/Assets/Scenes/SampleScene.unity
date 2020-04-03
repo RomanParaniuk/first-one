@@ -1562,11 +1562,25 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 999897776, guid: 172c475a33e9444f5a6211c12756e984, type: 3}
+      propertyPath: slideSpeed
+      value: 1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8067484528916521214, guid: 172c475a33e9444f5a6211c12756e984,
         type: 3}
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 8067484529842183933, guid: 172c475a33e9444f5a6211c12756e984,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8067484529842183933, guid: 172c475a33e9444f5a6211c12756e984,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8067484530265424314, guid: 172c475a33e9444f5a6211c12756e984,
         type: 3}
       propertyPath: m_LocalPosition.x
