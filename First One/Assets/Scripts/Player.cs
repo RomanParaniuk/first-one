@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     Rigidbody2D rb;
     Animator animator;
-    Collider2D collider;
-
 
 
     bool isAlive = true;
@@ -43,6 +40,7 @@ public class Player : MonoBehaviour
     public Joystick joystick;
     public Transform ledgeCheck;
     public Transform wallCheck;
+    public Transform jumpCheck;
 
 
 
@@ -58,7 +56,8 @@ public class Player : MonoBehaviour
     public bool isSliding = false;
     public bool isTouchingLedge;
     public bool isTouchingWall;
-    private bool canClimbLedge = false;
+    public bool isEnoughPlaceForJump = false;
+    private bool isClimbLedging = false;
     public bool ledgeDetected;
     public float groundLength = 0.45f;
     public Vector3 colliderOffset;
@@ -68,8 +67,6 @@ public class Player : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        collider = GetComponent<Collider2D>();
-
     }
 
     void Update()
@@ -96,7 +93,11 @@ public class Player : MonoBehaviour
 
         isTouchingLedge = Physics2D.Raycast(ledgeCheck.position, transform.right, wallCheckDistance, groundLayer);
 
+        isEnoughPlaceForJump = !Physics2D.Raycast(jumpCheck.position+ colliderOffset, transform.up, wallCheckDistance, groundLayer) ||
+            !Physics2D.Raycast(jumpCheck.position - colliderOffset, transform.up, wallCheckDistance, groundLayer);
+
         canSlide = joystick.Vertical < -0.3f && slideTimer < Time.time && onGround && Math.Abs(rb.velocity.x) > 2.0f;
+
 
         if (isTouchingWall && !isTouchingLedge && !ledgeDetected)
         {
@@ -112,7 +113,7 @@ public class Player : MonoBehaviour
             return;
         }
 
-        if (!isSliding)
+        if (!(isSliding || isClimbLedging))
         {
             moveCharacter(direction.x);
             Jump();
@@ -152,7 +153,7 @@ public class Player : MonoBehaviour
 
     void Jump()
     {
-        if (joystick.Vertical > 0.4f && jumpTimer < Time.time && onGround)
+        if (joystick.Vertical > 0.4f && jumpTimer < Time.time && onGround && isEnoughPlaceForJump)
         {
             rb.velocity = new Vector2(rb.velocity.x, 0);
             rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
@@ -211,9 +212,9 @@ public class Player : MonoBehaviour
 
     private void LedgeClimb()
     {
-        if (ledgeDetected && !canClimbLedge)
+        if (ledgeDetected && !isClimbLedging)
         {
-            canClimbLedge = true;
+            isClimbLedging = true;
 
             if (facingRight)
             {
@@ -226,11 +227,11 @@ public class Player : MonoBehaviour
                 ledgePos2 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) - ledgeClimbXOffset2, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset2);
             }
 
-            animator.SetBool("canClimbLedge", canClimbLedge);
+            animator.SetBool("canClimbLedge", isClimbLedging);
 
         }
 
-        if (canClimbLedge)
+        if (isClimbLedging)
         {
             transform.position = ledgePos1;
         }
@@ -238,10 +239,10 @@ public class Player : MonoBehaviour
 
     public void FinishLedgeClimb()
     {
-        canClimbLedge = false;
+        isClimbLedging = false;
         transform.position = ledgePos2;
         ledgeDetected = false;
-        animator.SetBool("canClimbLedge", canClimbLedge);
+        animator.SetBool("canClimbLedge", isClimbLedging);
     }
 
     public void FinishSlide()
@@ -284,6 +285,8 @@ public class Player : MonoBehaviour
         Gizmos.DrawLine(transform.position - colliderOffset, transform.position - colliderOffset + Vector3.down * groundLength);
         Gizmos.DrawLine(transform.position + colliderOffset + Vector3.right * wallCheckDistance, transform.position + colliderOffset);
         Gizmos.DrawLine(ledgeCheck.position + colliderOffset + Vector3.right * wallCheckDistance, ledgeCheck.position + colliderOffset);
+        Gizmos.DrawLine(jumpCheck.position + colliderOffset, jumpCheck.position + colliderOffset + Vector3.up * wallCheckDistance);
+        Gizmos.DrawLine(jumpCheck.position - colliderOffset, jumpCheck.position - colliderOffset + Vector3.up * wallCheckDistance);
 
     }
 
