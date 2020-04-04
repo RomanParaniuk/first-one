@@ -56,7 +56,7 @@ public class Player : MonoBehaviour
     public bool isSliding = false;
     public bool isTouchingLedge;
     public bool isTouchingWall;
-    public bool isEnoughPlaceForJump = false;
+    public bool canJump = false;
     private bool isClimbLedging = false;
     public bool ledgeDetected;
     public float groundLength = 0.45f;
@@ -93,8 +93,9 @@ public class Player : MonoBehaviour
 
         isTouchingLedge = Physics2D.Raycast(ledgeCheck.position, transform.right, wallCheckDistance, groundLayer);
 
-        isEnoughPlaceForJump = !Physics2D.Raycast(jumpCheck.position+ colliderOffset, transform.up, wallCheckDistance, groundLayer) ||
-            !Physics2D.Raycast(jumpCheck.position - colliderOffset, transform.up, wallCheckDistance, groundLayer);
+        canJump = !(Physics2D.Raycast(jumpCheck.position + colliderOffset + new Vector3(-0.06f, 0, 0), Vector2.up, wallCheckDistance, groundLayer)||
+            Physics2D.Raycast(jumpCheck.position - colliderOffset - new Vector3(-0.06f, 0, 0), Vector2.up, wallCheckDistance, groundLayer));
+
 
         canSlide = joystick.Vertical < -0.3f && slideTimer < Time.time && onGround && Math.Abs(rb.velocity.x) > 2.0f;
 
@@ -153,7 +154,7 @@ public class Player : MonoBehaviour
 
     void Jump()
     {
-        if (joystick.Vertical > 0.4f && jumpTimer < Time.time && onGround && isEnoughPlaceForJump)
+        if (joystick.Vertical > 0.4f && jumpTimer < Time.time && onGround && canJump)
         {
             rb.velocity = new Vector2(rb.velocity.x, 0);
             rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
@@ -285,8 +286,8 @@ public class Player : MonoBehaviour
         Gizmos.DrawLine(transform.position - colliderOffset, transform.position - colliderOffset + Vector3.down * groundLength);
         Gizmos.DrawLine(transform.position + colliderOffset + Vector3.right * wallCheckDistance, transform.position + colliderOffset);
         Gizmos.DrawLine(ledgeCheck.position + colliderOffset + Vector3.right * wallCheckDistance, ledgeCheck.position + colliderOffset);
-        Gizmos.DrawLine(jumpCheck.position + colliderOffset, jumpCheck.position + colliderOffset + Vector3.up * wallCheckDistance);
-        Gizmos.DrawLine(jumpCheck.position - colliderOffset, jumpCheck.position - colliderOffset + Vector3.up * wallCheckDistance);
+        Gizmos.DrawLine(jumpCheck.position + colliderOffset+ new Vector3(-0.06f,0, 0), jumpCheck.position + colliderOffset + new Vector3(-0.06f, 0, 0) + Vector3.up * wallCheckDistance);
+        Gizmos.DrawLine(jumpCheck.position - colliderOffset - new Vector3(-0.06f, 0, 0), jumpCheck.position - colliderOffset - new Vector3(-0.06f, 0, 0) + Vector3.up * wallCheckDistance);
 
     }
 
