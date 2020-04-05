@@ -22,7 +22,8 @@ public class Player : MonoBehaviour
 
     [Header("Horizontal Movement")]
     public bool isMoving = true;
-    public float moveSpeed = 7f;
+    public float runSpeed = 7f;
+    public float sneakingSpeed = 4f;
     public Vector2 direction;
     public float slideSpeed = 0.2f;
     public float slideDelay = 2f;
@@ -34,6 +35,8 @@ public class Player : MonoBehaviour
     public float jumpDelay = 0.25f;
     private float jumpTimer;
     private float slideTimer;
+    public bool isSneaking = false;
+
 
     [Header("Components")]
     public LayerMask groundLayer;
@@ -45,7 +48,8 @@ public class Player : MonoBehaviour
 
 
     [Header("Physics")]
-    public float maxSpeed = 7f;
+    public float maxRunSpeed = 4f;
+    public float maxSquattingSpeed = 1.9f;
     public float minSpeed = 0.02f;
     public float linearDrag = 4f;
     public float gravity = 1f;
@@ -80,7 +84,7 @@ public class Player : MonoBehaviour
         animator.SetBool("onGround", onGround);
         animator.SetFloat("vertical", rb.velocity.y);
 
-        direction = new Vector2(joystick.Horizontal, maxSpeed);
+        direction = new Vector2(joystick.Horizontal, maxRunSpeed);
     }
 
 
@@ -93,11 +97,8 @@ public class Player : MonoBehaviour
 
         isTouchingLedge = Physics2D.Raycast(ledgeCheck.position, transform.right, wallCheckDistance, groundLayer);
 
-        canJump = !(Physics2D.Raycast(jumpCheck.position + colliderOffset + new Vector3(-0.06f, 0, 0), Vector2.up, wallCheckDistance, groundLayer)||
-            Physics2D.Raycast(jumpCheck.position - colliderOffset - new Vector3(-0.06f, 0, 0), Vector2.up, wallCheckDistance, groundLayer));
-
-
-        canSlide = joystick.Vertical < -0.3f && slideTimer < Time.time && onGround && Math.Abs(rb.velocity.x) > 2.0f;
+        canJump = !(Physics2D.Raycast(jumpCheck.position + colliderOffset, Vector2.up, wallCheckDistance, groundLayer)||
+            Physics2D.Raycast(jumpCheck.position - colliderOffset, Vector2.up, wallCheckDistance, groundLayer));
 
 
         if (isTouchingWall && !isTouchingLedge && !ledgeDetected)
@@ -116,7 +117,8 @@ public class Player : MonoBehaviour
 
         if (!(isSliding || isClimbLedging))
         {
-            moveCharacter(direction.x);
+            MoveCharacter(direction.x, runSpeed, maxRunSpeed);
+            SneakingMove();
             Jump();
         }
 
@@ -132,11 +134,32 @@ public class Player : MonoBehaviour
         }
     }
 
-    void moveCharacter(float horizontal)
+    void SneakingMove()
     {
-        rb.AddForce(Vector2.right * horizontal * moveSpeed);
+        if (joystick.Vertical < -0.3f && Mathf.Abs(rb.velocity.x) < minSpeed)
+        {
+            isSneaking = true;
+            animator.SetBool("isSneaking", isSneaking);
 
-        if ((horizontal > 0 && !facingRight) || (horizontal < 0 && facingRight) && !isSliding)
+        }
+
+        if (isSneaking)
+        {
+            MoveCharacter(direction.x, sneakingSpeed, maxSquattingSpeed);
+        }
+
+        if (joystick.Vertical >= 0 )
+        {
+            isSneaking = false;
+            animator.SetBool("isSneaking", isSneaking);
+        }
+    }
+
+    void MoveCharacter(float horizontal, float movingSpeed, float maxSpeed)
+    {
+        rb.AddForce(Vector2.right * horizontal * movingSpeed);
+
+        if ((horizontal > 0 && !facingRight) || (horizontal < 0 && facingRight))
         {
             Flip();
         }
@@ -150,6 +173,7 @@ public class Player : MonoBehaviour
         }
 
         animator.SetFloat("horizontal", Mathf.Abs(rb.velocity.x));
+        print(Mathf.Abs(rb.velocity.x));
     }
 
     void Jump()
@@ -166,7 +190,7 @@ public class Player : MonoBehaviour
 
     void Slide(float directionX)
     {
-        if (canSlide)
+        if (joystick.Vertical < -0.3f && slideTimer < Time.time && onGround && Math.Abs(rb.velocity.x) > 2.0f)
         {
             if ((directionX > 0 && !facingRight) || (directionX < 0 && facingRight) && !isSliding)
             {
@@ -286,8 +310,8 @@ public class Player : MonoBehaviour
         Gizmos.DrawLine(transform.position - colliderOffset, transform.position - colliderOffset + Vector3.down * groundLength);
         Gizmos.DrawLine(transform.position + colliderOffset + Vector3.right * wallCheckDistance, transform.position + colliderOffset);
         Gizmos.DrawLine(ledgeCheck.position + colliderOffset + Vector3.right * wallCheckDistance, ledgeCheck.position + colliderOffset);
-        Gizmos.DrawLine(jumpCheck.position + colliderOffset+ new Vector3(-0.06f,0, 0), jumpCheck.position + colliderOffset + new Vector3(-0.06f, 0, 0) + Vector3.up * wallCheckDistance);
-        Gizmos.DrawLine(jumpCheck.position - colliderOffset - new Vector3(-0.06f, 0, 0), jumpCheck.position - colliderOffset - new Vector3(-0.06f, 0, 0) + Vector3.up * wallCheckDistance);
+        Gizmos.DrawLine(jumpCheck.position + colliderOffset, jumpCheck.position + colliderOffset + Vector3.up * wallCheckDistance);
+        Gizmos.DrawLine(jumpCheck.position - colliderOffset, jumpCheck.position - colliderOffset + Vector3.up * wallCheckDistance);
 
     }
 
