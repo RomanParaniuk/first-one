@@ -28,7 +28,6 @@ public class Player : MonoBehaviour
     public float slideSpeed = 0.2f;
     public float slideDelay = 2f;
     private bool facingRight = true;
-    private bool canSlide = false;
 
     [Header("Vertical Movement")]
     public float jumpSpeed = 1f;
@@ -173,7 +172,6 @@ public class Player : MonoBehaviour
         }
 
         animator.SetFloat("horizontal", Mathf.Abs(rb.velocity.x));
-        print(Mathf.Abs(rb.velocity.x));
     }
 
     void Jump()
@@ -303,6 +301,13 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void Die()
+    {
+        isAlive = false;
+        animator.SetTrigger("isDying");
+
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
@@ -312,13 +317,6 @@ public class Player : MonoBehaviour
         Gizmos.DrawLine(ledgeCheck.position + colliderOffset + Vector3.right * wallCheckDistance, ledgeCheck.position + colliderOffset);
         Gizmos.DrawLine(jumpCheck.position + colliderOffset, jumpCheck.position + colliderOffset + Vector3.up * wallCheckDistance);
         Gizmos.DrawLine(jumpCheck.position - colliderOffset, jumpCheck.position - colliderOffset + Vector3.up * wallCheckDistance);
-
-    }
-
-    public void Die()
-    {
-        isAlive = false;
-        animator.SetTrigger("isDying");
 
     }
 }
