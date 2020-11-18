@@ -20,7 +20,7 @@ public class Spikes : MonoBehaviour
        var playerCollider = player.GetComponent<BoxCollider2D>();
         if(other == playerCollider)
         {
-            player.Die();
+             //player.Die();
         }
     }
 }

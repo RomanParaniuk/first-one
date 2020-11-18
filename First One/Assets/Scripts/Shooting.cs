@@ -35,7 +35,6 @@ public class Shooting : MonoBehaviour
         isShooting = false;
         animator = GetComponentInParent<Animator>();
         animator.SetFloat("shootingSpeed", shootingSpeed);
-
     }
 
     void Update()
