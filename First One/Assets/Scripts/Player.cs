@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
 {
     Rigidbody2D rb;
     Animator animator;
+    bool isAlive = true;
 
     [Header("Horizontal Movement")]
     public bool isMoving = true;
@@ -22,7 +23,7 @@ public class Player : MonoBehaviour
     [Header("Components")]
     public LayerMask groundLayer;
     public Joystick joystick;
-    public Transform jumpCheck;
+    //public Transform jumpCheck;
 
     [Header("Physics")]
     public float maxRunSpeed = 4f;
@@ -32,10 +33,11 @@ public class Player : MonoBehaviour
     public float fallMultiplier = 5f;
 
     [Header("Collision")]
-    public bool onGround = false;
+    public bool onGround = true;
     public bool canJump = false;
-    public float groundLength = 0.45f;
-    public Vector3 colliderOffset;
+   // public float groundLength = 0.45f;
+    //public float wallCheckDistance = 0.1f;
+   // public Vector3 colliderOffset;
 
 
     // Start is called before the first frame update
@@ -48,6 +50,93 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+       // CheckSurroundings();
+
+        animator.SetBool("onGround", onGround);
+        animator.SetFloat("vertical", rb.velocity.y);
+
+        direction = new Vector2(joystick.Horizontal, maxRunSpeed);
+
+    }
+
+    void FixedUpdate()
+    {
+        if (!isAlive)
+        {
+            return;
+        }
+        Debug.Log(direction.x);
+            MoveCharacter(direction.x, runSpeed, maxRunSpeed);
+           // Jump();
+
+       modifyPhysics();
+    }
+
+    //private void CheckSurroundings()
+    //{
+    //    onGround = Physics2D.Raycast(transform.position + colliderOffset, Vector2.down, groundLength, groundLayer) ||
+    //        Physics2D.Raycast(transform.position - colliderOffset, Vector2.down, groundLength, groundLayer);
+
+
+    //    canJump = !(Physics2D.Raycast(jumpCheck.position + colliderOffset, Vector2.up, wallCheckDistance, groundLayer) ||
+    //        Physics2D.Raycast(jumpCheck.position - colliderOffset, Vector2.up, wallCheckDistance, groundLayer));
+
+    //}
+
+    void MoveCharacter(float horizontal, float movingSpeed, float maxSpeed)
+    {
+        rb.AddForce(Vector2.right * horizontal * movingSpeed);
+
+        if ((horizontal > 0 && !facingRight) || (horizontal < 0 && facingRight))
+        {
+            Flip();
+        }
+        if (Mathf.Abs(rb.velocity.x) > maxSpeed)
+        {
+            rb.velocity = new Vector2(Mathf.Sign(rb.velocity.x) * maxSpeed, rb.velocity.y);
+        }
+        if (Mathf.Abs(rb.velocity.x) < minSpeed)
+        {
+            rb.velocity = new Vector2(0f, rb.velocity.y);
+        }
+
+        animator.SetFloat("horizontal", Mathf.Abs(rb.velocity.x));
+    }
+
+    void Flip()
+    {
+        facingRight = !facingRight;
+        transform.localRotation = Quaternion.Euler(0, facingRight ? 0 : 180, 0);
+    }
+
+    void modifyPhysics()
+    {
+        bool changingDirections = (direction.x > 0 && rb.velocity.x < 0) || (direction.x < 0 && rb.velocity.x > 0);
+
+        if (onGround)
+        {
+
+            if (Mathf.Abs(direction.x) < 0.4f || changingDirections)
+            {
+                rb.drag = linearDrag;
+            }
+            else
+            {
+                rb.drag = 0f;
+            }
+        }
+        else
+        {
+            rb.gravityScale = gravity;
+            rb.drag = linearDrag * 0.15f;
+            if (rb.velocity.y < 0)
+            {
+                rb.gravityScale = gravity * fallMultiplier;
+            }
+            else if (rb.velocity.y > 0 && joystick.Vertical <= 0.4f)
+            {
+                rb.gravityScale = gravity * (fallMultiplier / 2);
+            }
+        }
     }
 }

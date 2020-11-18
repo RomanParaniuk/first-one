@@ -96,12 +96,12 @@ public class Shooting : MonoBehaviour
 
     public void InstantiateLaser()
     {
-        GameObject laser = Instantiate(
-               laserPrefab,
-               gun.transform.position,
-               Quaternion.Euler(new Vector3(0, 0, laserAngle)));
+        //GameObject laser = Instantiate(
+        //       laserPrefab,
+        //       gun.transform.position,
+        //       Quaternion.Euler(new Vector3(0, 0, laserAngle)));
 
-        laser.GetComponent<Rigidbody2D>().velocity = fireJoystick.Direction.normalized * laserSpeed;
+        //laser.GetComponent<Rigidbody2D>().velocity = fireJoystick.Direction.normalized * laserSpeed;
     }
 
     public void ReturnDefaultPosition()
