@@ -53,7 +53,7 @@ public class Player : MonoBehaviour
         CheckSurroundings();
 
         animator.SetBool("onGround", onGround);
-        animator.SetFloat("vertical", rb.velocity.y);
+        animator.SetFloat("vertical", Mathf.Abs(rb.velocity.y));
 
         direction = new Vector2(joystick.Horizontal, maxRunSpeed);
 
