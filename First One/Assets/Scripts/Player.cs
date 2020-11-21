@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     private bool facingRight = true;
 
     [Header("Vertical Movement")]
-    public float jumpSpeed = 1f;
+    public float jumpImpulse = 1.2f;
     public float jumpDelay = 0.25f;
     private float jumpTimer;
     private float slideTimer;
@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
     [Header("Components")]
     public LayerMask groundLayer;
     public Joystick joystick;
-    //public Transform jumpCheck;
+    public Transform jumpCheck;
 
     [Header("Physics")]
     public float maxRunSpeed = 4f;
@@ -35,9 +35,9 @@ public class Player : MonoBehaviour
     [Header("Collision")]
     public bool onGround = true;
     public bool canJump = false;
-   // public float groundLength = 0.45f;
-    //public float wallCheckDistance = 0.1f;
-   // public Vector3 colliderOffset;
+    public float groundLength = 0.37f;
+    public float wallCheckDistance = 0.1f;
+    public Vector3 colliderOffset;
 
 
     // Start is called before the first frame update
@@ -50,7 +50,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       // CheckSurroundings();
+        CheckSurroundings();
 
         animator.SetBool("onGround", onGround);
         animator.SetFloat("vertical", rb.velocity.y);
@@ -65,23 +65,22 @@ public class Player : MonoBehaviour
         {
             return;
         }
-        Debug.Log(direction.x);
             MoveCharacter(direction.x, runSpeed, maxRunSpeed);
-           // Jump();
+            Jump();
 
        modifyPhysics();
     }
 
-    //private void CheckSurroundings()
-    //{
-    //    onGround = Physics2D.Raycast(transform.position + colliderOffset, Vector2.down, groundLength, groundLayer) ||
-    //        Physics2D.Raycast(transform.position - colliderOffset, Vector2.down, groundLength, groundLayer);
+    private void CheckSurroundings()
+    {
+        onGround = Physics2D.Raycast(transform.position + colliderOffset, Vector2.down, groundLength, groundLayer) ||
+            Physics2D.Raycast(transform.position - colliderOffset, Vector2.down, groundLength, groundLayer);
 
 
-    //    canJump = !(Physics2D.Raycast(jumpCheck.position + colliderOffset, Vector2.up, wallCheckDistance, groundLayer) ||
-    //        Physics2D.Raycast(jumpCheck.position - colliderOffset, Vector2.up, wallCheckDistance, groundLayer));
+        canJump = !(Physics2D.Raycast(jumpCheck.position + colliderOffset, Vector2.up, wallCheckDistance, groundLayer) ||
+            Physics2D.Raycast(jumpCheck.position - colliderOffset, Vector2.up, wallCheckDistance, groundLayer));
 
-    //}
+    }
 
     void MoveCharacter(float horizontal, float movingSpeed, float maxSpeed)
     {
@@ -101,6 +100,18 @@ public class Player : MonoBehaviour
         }
 
         animator.SetFloat("horizontal", Mathf.Abs(rb.velocity.x));
+    }
+
+    void Jump()
+    {
+        if (joystick.Vertical > 0.4f && jumpTimer < Time.time && onGround &&canJump)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, 0);
+            rb.AddForce(Vector2.up * jumpImpulse, ForceMode2D.Impulse);
+            jumpTimer = Time.time + jumpDelay;
+            StartCoroutine(JumpSqueeze(1f, 1.2f, 0.1f));
+        }
+
     }
 
     void Flip()
@@ -138,5 +149,39 @@ public class Player : MonoBehaviour
                 rb.gravityScale = gravity * (fallMultiplier / 2);
             }
         }
+    }
+
+
+    IEnumerator JumpSqueeze(float xSqueeze, float ySqueeze, float seconds)
+    {
+        Vector3 originalSize = Vector3.one;
+        Vector3 newSize = new Vector3(xSqueeze, ySqueeze, originalSize.z);
+        float t = 0f;
+        while (t <= 1.0)
+        {
+            t += Time.deltaTime / seconds;
+            gameObject.transform.localScale = Vector3.Lerp(originalSize, newSize, t);
+            yield return null;
+        }
+
+        t = 0f;
+        while (t <= 1.0)
+        {
+            t += Time.deltaTime / seconds;
+            gameObject.transform.localScale = Vector3.Lerp(newSize, originalSize, t);
+            yield return null;
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position + colliderOffset, transform.position + colliderOffset + Vector3.down * groundLength);
+        Gizmos.DrawLine(transform.position - colliderOffset, transform.position - colliderOffset + Vector3.down * groundLength);
+        Gizmos.DrawLine(transform.position + colliderOffset + Vector3.right * wallCheckDistance, transform.position + colliderOffset);
+        //Gizmos.DrawLine(ledgeCheck.position + colliderOffset + Vector3.right * wallCheckDistance, ledgeCheck.position + colliderOffset);
+        Gizmos.DrawLine(jumpCheck.position + colliderOffset, jumpCheck.position + colliderOffset + Vector3.up * wallCheckDistance);
+        Gizmos.DrawLine(jumpCheck.position - colliderOffset, jumpCheck.position - colliderOffset + Vector3.up * wallCheckDistance);
+
     }
 }
