@@ -8,11 +8,14 @@ public class Shooting : MonoBehaviour
 
     [Header("Gun Details")]
     [SerializeField] Joystick fireJoystick;
+    [SerializeField] Joystick movementJoystick;
+
     [SerializeField] GameObject laserPrefab;
     [SerializeField] GameObject gun;
     [SerializeField] float turnSpeed = 10f;
     [SerializeField] float shootingSpeed = 1f;
     public float laserSpeed = 5f;
+
 
     [Header("Player Details")]
     [SerializeField] GameObject playerBody;
@@ -23,16 +26,17 @@ public class Shooting : MonoBehaviour
     private float returnToDefPosTimer;
     private float laserAngle;
     private float bodyAngle;
-    private bool isShooting;
-    private Vector3 flipScale = new Vector3(-1f,1f,1f);
-    private Vector3 regularScale = new Vector3(1f, 1f, 1f);
+    private bool wasShooting = false;
+    public static bool shootingRight = true;
+    public static bool isShooting = false;
+
 
 
 
     // Start is called before the first frame update
     public void Start()
     {
-        isShooting = false;
+        returnToDefPosTimer = returnToDefPosTime;
         animator = GetComponentInParent<Animator>();
         animator.SetFloat("shootingSpeed", shootingSpeed);
     }
@@ -47,9 +51,10 @@ public class Shooting : MonoBehaviour
             Shoot();
         }
 
-        if (!isShooting && returnToDefPosTimer < Time.time)
+        if (wasShooting && returnToDefPosTimer < Time.time)
         {
             ReturnDefaultPosition();
+            wasShooting = false;
         }
 
     }
@@ -59,13 +64,26 @@ public class Shooting : MonoBehaviour
         animator.SetBool("isShooting", isShooting);
 
         laserAngle = Mathf.Atan2(fireJoystick.Vertical, fireJoystick.Horizontal) * Mathf.Rad2Deg;
-        FlipBody(fireJoystick.Horizontal, playerBody);
 
-        bodyAngle = laserAngle + 90f;
+        bodyAngle = laserAngle + 90;
+
+        if ((fireJoystick.Horizontal > 0 && !shootingRight) || (fireJoystick.Horizontal < 0 && shootingRight))
+        {
+            shootingRight = !shootingRight;
+            GetComponent<Player>().Flip(shootingRight);
+        }
+
+        if (laserAngle > 90 || laserAngle < -90)
+        {
+            bodyAngle = -laserAngle +270;
+        }
+
         StartCoroutine(RotateBody(bodyAngle));
+        wasShooting = true;
         returnToDefPosTimer = returnToDefPosTime + Time.time;
 
     }
+
 
     private bool GetIsShooting()
     {
@@ -76,37 +94,42 @@ public class Shooting : MonoBehaviour
     {
         while (playerBody.transform.rotation.z != targetAngle)
         {
-            playerBody.transform.rotation = Quaternion.Slerp(playerBody.transform.rotation, Quaternion.Euler(0f, 0f, targetAngle), turnSpeed * Time.deltaTime);
+            playerBody.transform.localRotation = Quaternion.Slerp(playerBody.transform.localRotation, Quaternion.Euler(playerBody.transform.localRotation.x, playerBody.transform.localRotation.y, targetAngle), turnSpeed * Time.deltaTime);
             yield return null;
         }
         yield return null;
-
     }
 
-    private void FlipBody(float direction, GameObject gameObject)
-    {
-        if (direction < 0) {
-            gameObject.transform.localScale = flipScale;
-        }
-        else
-        {
-            gameObject.transform.localScale = regularScale;
-        }
-    }
+    //private void FlipBody()
+    //{
+    //    if (facingRight && shootingRight || !facingRight && shootingRight)
+    //    {
+    //        transform.rotation = Quaternion.Euler(0, 0, 0);
+    //    }
+    //    else
+    //    {
+    //        transform.rotation = Quaternion.Euler(0, 180, 0);
+    //    }
+
+    //}
 
     public void InstantiateLaser()
     {
-        //GameObject laser = Instantiate(
-        //       laserPrefab,
-        //       gun.transform.position,
-        //       Quaternion.Euler(new Vector3(0, 0, laserAngle)));
+        GameObject laser = Instantiate(
+               laserPrefab,
+               gun.transform.position,
+               Quaternion.Euler(new Vector3(0, 20f, laserAngle)));
 
-        //laser.GetComponent<Rigidbody2D>().velocity = fireJoystick.Direction.normalized * laserSpeed;
+        laser.GetComponent<Rigidbody2D>().velocity = fireJoystick.Direction.normalized * laserSpeed;
     }
 
-    public void ReturnDefaultPosition()
+    private void ReturnDefaultPosition()
     {
+        Debug.Log("yes");
+        //if(facingRight && shootingRight)
+        //{
+        //    GetComponent<Player>().Flip();
+        //}
         StartCoroutine(RotateBody(90f));
-        playerBody.transform.localScale = regularScale;   
     }
 }   

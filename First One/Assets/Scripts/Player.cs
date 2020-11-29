@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     public bool isMoving = true;
     public float runSpeed = 7f;
     public Vector2 direction;
-    private bool facingRight = true;
+    public static bool facingRight = true;
 
     [Header("Vertical Movement")]
     public float jumpImpulse = 1.2f;
@@ -40,6 +40,7 @@ public class Player : MonoBehaviour
     public Vector3 colliderOffset;
 
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -48,7 +49,7 @@ public class Player : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    public void Update()
     {
         CheckSurroundings();
 
@@ -82,13 +83,15 @@ public class Player : MonoBehaviour
 
     }
 
-    void MoveCharacter(float horizontal, float movingSpeed, float maxSpeed)
+    public void MoveCharacter(float horizontal, float movingSpeed, float maxSpeed)
     {
         rb.AddForce(Vector2.right * horizontal * movingSpeed);
 
-        if ((horizontal > 0 && !facingRight) || (horizontal < 0 && facingRight))
+        if (!Shooting.isShooting && ((horizontal > 0 && !facingRight) || (horizontal < 0 && facingRight)))
         {
-            Flip();
+            facingRight = !facingRight;
+            Shooting.shootingRight = !Shooting.shootingRight;
+            Flip(facingRight);
         }
         if (Mathf.Abs(rb.velocity.x) > maxSpeed)
         {
@@ -114,10 +117,9 @@ public class Player : MonoBehaviour
 
     }
 
-    void Flip()
+    public void Flip(bool oriental)
     {
-        facingRight = !facingRight;
-        transform.localRotation = Quaternion.Euler(0, facingRight ? 0 : 180, 0);
+        transform.rotation = Quaternion.Euler(0, oriental ? 0 : 180, 0);
     }
 
     void modifyPhysics()
@@ -144,8 +146,8 @@ public class Player : MonoBehaviour
             {
                 rb.gravityScale = gravity * fallMultiplier;
             }
-            else if (rb.velocity.y > 0 && joystick.Vertical <= 0.4f)
-            {
+            else if ( joystick.Vertical <= 0.4f)
+            { //rb.velocity.y > 0 &&
                 rb.gravityScale = gravity * (fallMultiplier / 2);
             }
         }
