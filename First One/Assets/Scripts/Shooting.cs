@@ -29,6 +29,7 @@ public class Shooting : MonoBehaviour
     private bool wasShooting = false;
     public static bool shootingRight = true;
     public static bool isShooting = false;
+    float defaultPosition;
 
 
 
@@ -36,14 +37,14 @@ public class Shooting : MonoBehaviour
     // Start is called before the first frame update
     public void Start()
     {
+        defaultPosition = playerBody.transform.localRotation.z;
         returnToDefPosTimer = returnToDefPosTime;
         animator = GetComponentInParent<Animator>();
         animator.SetFloat("shootingSpeed", shootingSpeed);
     }
 
     void Update()
-    {
-        StopAllCoroutines();
+    { 
         isShooting = GetIsShooting();
         animator.SetBool("isShooting", isShooting);
         if (isShooting)
@@ -51,12 +52,11 @@ public class Shooting : MonoBehaviour
             Shoot();
         }
 
-        if (wasShooting && returnToDefPosTimer < Time.time)
+        if (System.Math.Round(defaultPosition, 2) != System.Math.Round(playerBody.transform.localRotation.z, 2)
+                && returnToDefPosTimer < Time.time)
         {
             ReturnDefaultPosition();
-            wasShooting = false;
         }
-
     }
 
     public void Shoot()
@@ -75,10 +75,10 @@ public class Shooting : MonoBehaviour
 
         if (laserAngle > 90 || laserAngle < -90)
         {
-            bodyAngle = -laserAngle +270;
+            bodyAngle = -laserAngle + 270;
         }
 
-        StartCoroutine(RotateBody(bodyAngle));
+        RotateBody(bodyAngle);
         wasShooting = true;
         returnToDefPosTimer = returnToDefPosTime + Time.time;
 
@@ -90,35 +90,19 @@ public class Shooting : MonoBehaviour
         return fireJoystick.Direction != Vector2.zero;
     }
 
-    private IEnumerator RotateBody(float targetAngle)
+    private void RotateBody(float targetAngle)
     {
-        while (playerBody.transform.rotation.z != targetAngle)
-        {
-            playerBody.transform.localRotation = Quaternion.Slerp(playerBody.transform.localRotation, Quaternion.Euler(playerBody.transform.localRotation.x, playerBody.transform.localRotation.y, targetAngle), turnSpeed * Time.deltaTime);
-            yield return null;
-        }
-        yield return null;
+        Quaternion newRotation = Quaternion.AngleAxis(targetAngle, Vector3.forward);
+        playerBody.transform.localRotation = Quaternion.Slerp(playerBody.transform.localRotation, newRotation, turnSpeed * Time.deltaTime);
+        
     }
-
-    //private void FlipBody()
-    //{
-    //    if (facingRight && shootingRight || !facingRight && shootingRight)
-    //    {
-    //        transform.rotation = Quaternion.Euler(0, 0, 0);
-    //    }
-    //    else
-    //    {
-    //        transform.rotation = Quaternion.Euler(0, 180, 0);
-    //    }
-
-    //}
 
     public void InstantiateLaser()
     {
         GameObject laser = Instantiate(
                laserPrefab,
                gun.transform.position,
-               Quaternion.Euler(new Vector3(0, 20f, laserAngle)));
+               Quaternion.Euler(new Vector3(20, 0f, laserAngle)));
 
         laser.GetComponent<Rigidbody2D>().velocity = fireJoystick.Direction.normalized * laserSpeed;
     }
@@ -126,10 +110,13 @@ public class Shooting : MonoBehaviour
     private void ReturnDefaultPosition()
     {
         Debug.Log("yes");
-        //if(facingRight && shootingRight)
-        //{
-        //    GetComponent<Player>().Flip();
-        //}
-        StartCoroutine(RotateBody(90f));
+
+        if (Player.facingRight != shootingRight)
+        {
+            shootingRight = !shootingRight;
+            GetComponent<Player>().Flip(Player.facingRight);
+        }
+        RotateBody(90f);
+
     }
 }   
