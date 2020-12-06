@@ -8,7 +8,6 @@ public class Shooting : MonoBehaviour
 
     [Header("Gun Details")]
     [SerializeField] Joystick fireJoystick;
-    [SerializeField] Joystick movementJoystick;
 
     [SerializeField] GameObject laserPrefab;
     [SerializeField] GameObject gun;
@@ -30,6 +29,7 @@ public class Shooting : MonoBehaviour
     public static bool shootingRight = true;
     public static bool isShooting = false;
     float defaultPosition;
+    public static float fireJoystickDirection = 1;
 
 
 
@@ -87,6 +87,7 @@ public class Shooting : MonoBehaviour
 
     private bool GetIsShooting()
     {
+        fireJoystickDirection = fireJoystick.Horizontal;
         return fireJoystick.Direction != Vector2.zero;
     }
 
@@ -109,8 +110,6 @@ public class Shooting : MonoBehaviour
 
     private void ReturnDefaultPosition()
     {
-        Debug.Log("yes");
-
         if (Player.facingRight != shootingRight)
         {
             shootingRight = !shootingRight;

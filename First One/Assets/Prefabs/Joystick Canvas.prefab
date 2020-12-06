@@ -30,7 +30,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 8436642317199796588}
+  - {fileID: 7591101612440004434}
   - {fileID: 5204470805536443968}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -100,6 +100,42 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!1 &7989177882944849668
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7591101612440004434}
+  m_Layer: 9
+  m_Name: Fire Joystick Canvas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &7591101612440004434
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7989177882944849668}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 8436642317199796588}
+  m_Father: {fileID: 3610963615969447315}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &4133118126072737860
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -230,7 +266,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 3610963615969447315}
+    m_TransformParent: {fileID: 7591101612440004434}
     m_Modifications:
     - target: {fileID: 2929252283123773938, guid: daf97d7d303ee47a88c25f2dd2a12ff3,
         type: 3}
@@ -250,17 +286,17 @@ PrefabInstance:
     - target: {fileID: 2929252283123773938, guid: daf97d7d303ee47a88c25f2dd2a12ff3,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2929252283123773938, guid: daf97d7d303ee47a88c25f2dd2a12ff3,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2929252283123773938, guid: daf97d7d303ee47a88c25f2dd2a12ff3,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2929252283123773938, guid: daf97d7d303ee47a88c25f2dd2a12ff3,
         type: 3}
@@ -290,12 +326,12 @@ PrefabInstance:
     - target: {fileID: 2929252283123773938, guid: daf97d7d303ee47a88c25f2dd2a12ff3,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 1741
+      value: 1183.5
       objectReference: {fileID: 0}
     - target: {fileID: 2929252283123773938, guid: daf97d7d303ee47a88c25f2dd2a12ff3,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 284
+      value: 40.5
       objectReference: {fileID: 0}
     - target: {fileID: 2929252283123773938, guid: daf97d7d303ee47a88c25f2dd2a12ff3,
         type: 3}

@@ -55,6 +55,7 @@ public class Player : MonoBehaviour
 
         animator.SetBool("onGround", onGround);
         animator.SetFloat("vertical", Mathf.Abs(rb.velocity.y));
+        animator.SetBool("revertRunning", CheckIfRunReverted());
 
         direction = new Vector2(joystick.Horizontal, maxRunSpeed);
 
@@ -103,6 +104,16 @@ public class Player : MonoBehaviour
         }
 
         animator.SetFloat("horizontal", Mathf.Abs(rb.velocity.x));
+    }
+
+    bool CheckIfRunReverted()
+    {
+        if ((joystick.Horizontal >= 0 && Shooting.fireJoystickDirection >= 0) ||
+            (joystick.Horizontal <= 0 && Shooting.fireJoystickDirection <= 0))
+        {
+            return false;
+        }
+        return true;
     }
 
     void Jump()
